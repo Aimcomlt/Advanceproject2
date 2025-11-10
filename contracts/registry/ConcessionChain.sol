@@ -3,6 +3,8 @@ pragma solidity ^0.8.24;
 
 import {AccessControl} from "@openzeppelin/contracts/access/AccessControl.sol";
 
+import {ReaderLib} from "../libraries/ReaderLib.sol";
+
 /// @notice Interface for the feedback NFT contract that is minted once
 ///         reader consensus is achieved for a highlight or comment record.
 interface IFeedbackNFT {
@@ -92,7 +94,7 @@ contract ConcessionChain is AccessControl {
     /// @param highlightText Canonicalised highlight text string.
     /// @return hash keccak256 hash representing the highlight record.
     function hashHighlight(uint256 bookId, string calldata highlightText) external pure returns (bytes32 hash) {
-        hash = keccak256(abi.encodePacked("HIGHLIGHT", bookId, highlightText));
+        hash = ReaderLib.hashHighlight(bookId, highlightText);
     }
 
     /// @notice Compute the canonical hash for a comment tied to a given book token.
@@ -100,7 +102,7 @@ contract ConcessionChain is AccessControl {
     /// @param commentText Canonicalised comment text string.
     /// @return hash keccak256 hash representing the comment record.
     function hashComment(uint256 bookId, string calldata commentText) external pure returns (bytes32 hash) {
-        hash = keccak256(abi.encodePacked("COMMENT", bookId, commentText));
+        hash = ReaderLib.hashComment(bookId, commentText);
     }
 
     /// @notice Register or support a feedback record identified by `recordHash`.
@@ -197,7 +199,7 @@ contract ConcessionChain is AccessControl {
             return;
         }
 
-        if (record.approvals < consensusThreshold) {
+        if (!ReaderLib.hasReachedConsensus(record.approvals, consensusThreshold)) {
             return;
         }
 

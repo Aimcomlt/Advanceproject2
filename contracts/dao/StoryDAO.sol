@@ -5,6 +5,7 @@ import {Governor} from "@openzeppelin/contracts/governance/Governor.sol";
 import {GovernorSettings} from "@openzeppelin/contracts/governance/extensions/GovernorSettings.sol";
 import {GovernorCountingSimple} from "@openzeppelin/contracts/governance/extensions/GovernorCountingSimple.sol";
 
+import {GovernanceLib} from "../libraries/GovernanceLib.sol";
 import {AuthorCoin} from "../token/AuthorCoin.sol";
 import {ReaderProfileNFT} from "../nft/ReaderProfileNFT.sol";
 import {IProposalBeforeExecuteHook, IProposalAfterExecuteHook} from "./interfaces/IProposalExecutionHooks.sol";
@@ -12,9 +13,6 @@ import {IProposalBeforeExecuteHook, IProposalAfterExecuteHook} from "./interface
 /// @title StoryDAO
 /// @notice Governance contract coordinating literary proposals with AuthorCoin voting power.
 contract StoryDAO is Governor, GovernorSettings, GovernorCountingSimple {
-    /// @notice Basis point denominator used for quorum calculations.
-    uint16 public constant BPS_DENOMINATOR = 10_000;
-
     /// @dev Thrown when attempting to configure a quorum percentage above 100%.
     error StoryDAO__InvalidQuorumBps(uint256 bps);
     /// @dev Thrown when governance actions are attempted without an associated reader profile.
@@ -38,7 +36,7 @@ contract StoryDAO is Governor, GovernorSettings, GovernorCountingSimple {
     IProposalAfterExecuteHook public afterExecuteHook;
 
     /// @dev Cached quorum configuration in basis points.
-    uint256 private _quorumBps;
+    uint16 private _quorumBps;
 
     /// @param authorCoin_ Address of the AuthorCoin ERC20 used for voting power.
     /// @param readerProfile_ Address of the ReaderProfile NFT enforcing governance access.
@@ -61,7 +59,7 @@ contract StoryDAO is Governor, GovernorSettings, GovernorCountingSimple {
         if (address(authorCoin_) == address(0) || address(readerProfile_) == address(0)) {
             revert StoryDAO__ZeroAddress();
         }
-        if (quorumBps_ > BPS_DENOMINATOR) {
+        if (!GovernanceLib.isValidQuorumBps(quorumBps_)) {
             revert StoryDAO__InvalidQuorumBps(quorumBps_);
         }
 
@@ -96,7 +94,7 @@ contract StoryDAO is Governor, GovernorSettings, GovernorCountingSimple {
 
     /// @inheritdoc Governor
     function quorum(uint256) public view override returns (uint256) {
-        return (authorCoin.totalSupply() * _quorumBps) / BPS_DENOMINATOR;
+        return GovernanceLib.computeQuorum(authorCoin.totalSupply(), _quorumBps);
     }
 
     /// @inheritdoc Governor
@@ -184,10 +182,10 @@ contract StoryDAO is Governor, GovernorSettings, GovernorCountingSimple {
 
     /// @dev Internal helper performing quorum state updates with validation.
     function _updateQuorumBps(uint16 newQuorumBps) private {
-        if (newQuorumBps > BPS_DENOMINATOR) {
+        if (!GovernanceLib.isValidQuorumBps(newQuorumBps)) {
             revert StoryDAO__InvalidQuorumBps(newQuorumBps);
         }
-        uint256 previous = _quorumBps;
+        uint16 previous = _quorumBps;
         _quorumBps = newQuorumBps;
         emit QuorumBpsUpdated(previous, newQuorumBps);
     }

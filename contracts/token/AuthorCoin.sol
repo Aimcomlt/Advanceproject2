@@ -5,6 +5,7 @@ import {AccessControl} from "@openzeppelin/contracts/access/AccessControl.sol";
 import {ERC20} from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import {ERC20Permit} from "@openzeppelin/contracts/token/ERC20/extensions/ERC20Permit.sol";
 
+import {AuthorLib} from "../libraries/AuthorLib.sol";
 import {IBookSaleOracle} from "./interfaces/IBookSaleOracle.sol";
 
 /// @title AuthorCoin
@@ -61,7 +62,7 @@ contract AuthorCoin is ERC20Permit, AccessControl {
 
         treasury = initialTreasury;
         authorShareBps = 9_000;
-        treasuryShareBps = MAX_BPS - authorShareBps;
+        treasuryShareBps = AuthorLib.complementaryShare(authorShareBps);
     }
 
     /// @notice Update the oracle contract used to validate book sales.
@@ -82,7 +83,7 @@ contract AuthorCoin is ERC20Permit, AccessControl {
     /// @param authorBps Basis points minted to the author.
     /// @param treasuryBps Basis points minted to the treasury.
     function setSaleSplits(uint16 authorBps, uint16 treasuryBps) external onlyRole(DEFAULT_ADMIN_ROLE) {
-        require(authorBps + treasuryBps == MAX_BPS, "AuthorCoin: invalid split");
+        require(AuthorLib.isValidSplit(authorBps, treasuryBps), "AuthorCoin: invalid split");
         authorShareBps = authorBps;
         treasuryShareBps = treasuryBps;
         emit SaleSplitUpdated(authorBps, treasuryBps);
@@ -97,8 +98,11 @@ contract AuthorCoin is ERC20Permit, AccessControl {
         view
         returns (uint256 authorAmount, uint256 treasuryAmount)
     {
-        authorAmount = (mintAmount * authorShareBps) / MAX_BPS;
-        treasuryAmount = mintAmount - authorAmount;
+        (authorAmount, treasuryAmount) = AuthorLib.computeSaleSplit(
+            mintAmount,
+            authorShareBps,
+            treasuryShareBps
+        );
     }
 
     /// @notice Mint AuthorCoin in response to a verified book sale.
