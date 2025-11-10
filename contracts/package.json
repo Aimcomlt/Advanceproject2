@@ -2,5 +2,8 @@
   "name": "@literary-sovereignty/contracts",
   "version": "0.1.0",
   "private": true,
-  "description": "Smart contract sources for the Literary Sovereignty Blueprint."
+  "description": "Smart contract sources for the Literary Sovereignty Blueprint.",
+  "dependencies": {
+    "@openzeppelin/contracts": "^5.0.2"
+  }
 }
