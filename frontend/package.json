@@ -1,0 +1,6 @@
+{
+  "name": "@literary-sovereignty/frontend",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Frontend workspace for the Literary Sovereignty Blueprint."
+}
