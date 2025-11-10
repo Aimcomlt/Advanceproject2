@@ -56,6 +56,26 @@ literary-sovereignty/
 
 ---
 
+## 🛠️ Setup
+
+Ensure you are using Node.js 18+ with npm workspaces enabled.
+
+```bash
+# Install shared dev dependencies and bootstrap workspaces
+npm install
+
+# Type-check Hardhat config, scripts, and shared tooling
+npm run typecheck
+
+# Run repository-wide linting and formatting
+npm run lint
+npm run format
+```
+
+These commands install Hardhat, TypeScript, ESLint, and Prettier at the monorepo root so that every workspace (`contracts/`, `frontend/`, and `tooling/`) can share the same configuration.
+
+---
+
 ## 🔐 Smart Contract Modules
 
 ### 1. [AuthorCoin (ERC-20)](#1-authorcoin-erc-20)

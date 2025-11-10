@@ -1,0 +1,16 @@
+node_modules/
+.cache/
+artifacts/
+cache/
+dist/
+coverage/
+.env
+.env.*
+
+# TypeChain output
+typechain-types/
+
+# Editor directories and files
+.vscode/
+.idea/
+.DS_Store
