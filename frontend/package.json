@@ -2,5 +2,33 @@
   "name": "@literary-sovereignty/frontend",
   "version": "0.1.0",
   "private": true,
-  "description": "Frontend workspace for the Literary Sovereignty Blueprint."
+  "description": "Frontend workspace for the Literary Sovereignty Blueprint.",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@headlessui/react": "^1.7.20",
+    "clsx": "^2.1.1",
+    "ethers": "^6.13.2",
+    "next": "^14.2.5",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "viem": "^2.13.5",
+    "wagmi": "^2.9.5",
+    "tailwind-merge": "^2.5.2"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.10",
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "autoprefixer": "^10.4.19",
+    "eslint": "^9.9.1",
+    "eslint-config-next": "^14.2.5",
+    "postcss": "^8.4.41",
+    "tailwindcss": "^3.4.10",
+    "typescript": "^5.5.4"
+  }
 }
