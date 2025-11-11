@@ -1,0 +1,19 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+}
+
+body {
+  @apply bg-brand-foreground text-slate-900 antialiased;
+}
+
+a {
+  @apply text-brand underline-offset-4 transition-colors hover:text-brand/80;
+}
+
+button {
+  @apply cursor-pointer font-medium;
+}
