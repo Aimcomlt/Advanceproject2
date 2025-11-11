@@ -5,6 +5,11 @@ import { useMemo } from 'react';
 import { useAccount, useEnsAvatar, useEnsName } from 'wagmi';
 import { mainnet } from 'wagmi/chains';
 
+import BookDetail from '../../components/BookDetail';
+import DaoDashboard from '../../components/DaoDashboard';
+import ReaderProfile from '../../components/ReaderProfile';
+import TreasuryAnalytics from '../../components/TreasuryAnalytics';
+import { useReaderDashboardData } from '../../lib/hooks/useReaderDashboardData';
 import { formatAddress } from '../../lib/utils';
 
 const ReaderPage: NextPage = () => {
@@ -29,11 +34,22 @@ const ReaderPage: NextPage = () => {
   });
   const { address: connectedAddress } = useAccount();
 
+  const dashboardData = useReaderDashboardData({
+    address: addressValue,
+    ensName,
+    ensAvatar,
+    fallbackHandle: address ?? null,
+  });
+
   const displayHandle = useMemo(() => {
     if (ensName) return ensName;
     if (addressValue) return formatAddress(addressValue);
     return address ?? 'Unknown reader';
   }, [address, addressValue, ensName]);
+
+  const isViewingSelf = Boolean(
+    connectedAddress && addressValue && connectedAddress.toLowerCase() === addressValue.toLowerCase(),
+  );
 
   return (
     <>
@@ -41,45 +57,20 @@ const ReaderPage: NextPage = () => {
         <title>Reader | {displayHandle}</title>
       </Head>
       <article className="space-y-8">
-        <header className="flex flex-col gap-6 rounded-3xl border border-brand/20 bg-white p-6 shadow">
-          <div className="flex items-center gap-6">
-            <div className="flex h-20 w-20 items-center justify-center overflow-hidden rounded-2xl bg-brand/10 text-3xl text-brand">
-              {ensAvatar ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img src={ensAvatar} alt={displayHandle} className="h-full w-full object-cover" />
-              ) : (
-                displayHandle.slice(0, 2).toUpperCase()
-              )}
-            </div>
-            <div className="space-y-1">
-              <h1 className="text-3xl font-semibold text-slate-900">{displayHandle}</h1>
-              {normalizedAddress ? (
-                <p className="text-sm text-slate-500">
-                  {normalizedAddress}
-                  {connectedAddress && connectedAddress.toLowerCase() === normalizedAddress ? ' · You' : null}
-                </p>
-              ) : null}
-            </div>
+        <ReaderProfile {...dashboardData.profile} />
+        <section className="grid gap-6 lg:grid-cols-[2fr_1fr]">
+          <BookDetail {...dashboardData.book} />
+          <div className="space-y-6">
+            <DaoDashboard {...dashboardData.dao} />
+            <TreasuryAnalytics {...dashboardData.treasury} />
           </div>
-          <p className="text-sm text-slate-600">
-            This is a placeholder reader view. Populate it with publication metadata, chapter navigation,
-            and contribution actions as contract features become available.
-          </p>
-        </header>
-        <section className="grid gap-6 md:grid-cols-[2fr_1fr]">
-          <div className="space-y-4 rounded-3xl border border-slate-200 bg-white p-6 shadow">
-            <h2 className="text-xl font-semibold text-slate-900">Recent activity</h2>
-            <p className="text-sm text-slate-600">
-              Fetch on-chain events, rich text, or markdown content to render the reader timeline here.
-            </p>
-          </div>
-          <aside className="space-y-4 rounded-3xl border border-slate-200 bg-white p-6 shadow">
-            <h2 className="text-xl font-semibold text-slate-900">Support this author</h2>
-            <p className="text-sm text-slate-600">
-              Integrate tipping, patronage tiers, or unlockable content flows using wagmi hooks.
-            </p>
-          </aside>
         </section>
+        {isViewingSelf ? (
+          <p className="text-xs text-slate-500">
+            You are viewing your live reader dashboard. Contract hooks will automatically hydrate these modules when the backend
+            publishes ABIs.
+          </p>
+        ) : null}
       </article>
     </>
   );
