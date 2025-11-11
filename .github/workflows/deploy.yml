@@ -1,0 +1,49 @@
+name: Deploy to Testnets
+
+on:
+  push:
+    branches: ["main"]
+  workflow_dispatch:
+
+env:
+  NODE_VERSION: "20"
+
+jobs:
+  deploy:
+    name: Deploy ${{ matrix.network }}
+    runs-on: ubuntu-latest
+    environment: testnet
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - network: sepolia
+            rpc_secret: SEPOLIA_RPC_URL
+          - network: baseGoerli
+            rpc_secret: BASE_GOERLI_RPC_URL
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm install --legacy-peer-deps
+
+      - name: Deploy contracts
+        if: ${{ secrets[matrix.rpc_secret] != '' && secrets.DEPLOYER_PRIVATE_KEY != '' }}
+        env:
+          DEPLOYER_PRIVATE_KEY: ${{ secrets.DEPLOYER_PRIVATE_KEY }}
+          SEPOLIA_RPC_URL: ${{ secrets.SEPOLIA_RPC_URL }}
+          BASE_GOERLI_RPC_URL: ${{ secrets.BASE_GOERLI_RPC_URL }}
+          ETHERSCAN_API_KEY: ${{ secrets.ETHERSCAN_API_KEY }}
+          BASESCAN_API_KEY: ${{ secrets.BASESCAN_API_KEY }}
+        run: npx hardhat run scripts/deploy-core.ts --network ${{ matrix.network }}
+
+      - name: Skip deployment (missing secrets)
+        if: ${{ !(secrets[matrix.rpc_secret] != '' && secrets.DEPLOYER_PRIVATE_KEY != '') }}
+        run: echo "Secrets for ${{ matrix.network }} deployment are not configured. Skipping."
