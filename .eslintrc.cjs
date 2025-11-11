@@ -16,6 +16,20 @@ module.exports = {
     es2021: true,
   },
   ignorePatterns: ["dist/", "node_modules/", "artifacts/", "cache/"],
+  overrides: [
+    {
+      files: ["scripts/**/*.ts", "test/**/*.ts"],
+      env: {
+        node: true,
+        mocha: true,
+      },
+      rules: {
+        "@typescript-eslint/no-unused-expressions": "off",
+        "@typescript-eslint/no-floating-promises": "error",
+        "@typescript-eslint/consistent-type-imports": ["error", { prefer: "type-imports" }],
+      },
+    },
+  ],
   rules: {
     "prettier/prettier": "error"
   },

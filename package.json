@@ -8,6 +8,7 @@
   "scripts": {
     "build": "tsc -b",
     "lint": "eslint \"**/*.{ts,tsx,js,jsx}\" --max-warnings=0",
+    "lint:sol": "solhint \"contracts/**/*.sol\"",
     "format": "prettier --write .",
     "typecheck": "tsc --pretty --noEmit"
   },
@@ -23,6 +24,7 @@
     "@typescript-eslint/parser": "^8.4.0",
     "dotenv": "^16.4.5",
     "eslint": "^9.9.1",
+    "solhint": "^4.5.3",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-prettier": "^5.2.1",
     "hardhat": "^2.22.9",
