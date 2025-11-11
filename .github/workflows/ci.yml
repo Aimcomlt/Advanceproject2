@@ -1,0 +1,104 @@
+name: CI
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+
+env:
+  NODE_VERSION: "20"
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm install --legacy-peer-deps
+
+      - name: Lint sources
+        run: npm run lint
+
+  test:
+    runs-on: ubuntu-latest
+    needs: lint
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm install --legacy-peer-deps
+
+      - name: Run Hardhat tests
+        run: npx hardhat test
+
+  coverage:
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm install --legacy-peer-deps
+
+      - name: Generate coverage report
+        run: npx hardhat coverage
+
+  verify:
+    runs-on: ubuntu-latest
+    needs: coverage
+    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+    strategy:
+      matrix:
+        include:
+          - network: sepolia
+            address_secret: SEPOLIA_CONTRACT_ADDRESS
+          - network: baseGoerli
+            address_secret: BASE_GOERLI_CONTRACT_ADDRESS
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm install --legacy-peer-deps
+
+      - name: Compile contracts
+        run: npx hardhat compile
+
+      - name: Verify deployed contract
+        if: ${{ secrets[matrix.address_secret] != '' }}
+        env:
+          DEPLOYER_PRIVATE_KEY: ${{ secrets.DEPLOYER_PRIVATE_KEY }}
+          SEPOLIA_RPC_URL: ${{ secrets.SEPOLIA_RPC_URL }}
+          BASE_GOERLI_RPC_URL: ${{ secrets.BASE_GOERLI_RPC_URL }}
+          ETHERSCAN_API_KEY: ${{ secrets.ETHERSCAN_API_KEY }}
+          BASESCAN_API_KEY: ${{ secrets.BASESCAN_API_KEY }}
+          CONTRACT_ADDRESS: ${{ secrets[matrix.address_secret] }}
+        run: npx hardhat verify --network ${{ matrix.network }} $CONTRACT_ADDRESS

@@ -1,5 +1,6 @@
 import { HardhatUserConfig, NetworksUserConfig } from "hardhat/config";
 import "@nomicfoundation/hardhat-toolbox";
+import "solidity-coverage";
 import * as dotenv from "dotenv";
 
 dotenv.config();
@@ -48,6 +49,22 @@ const config: HardhatUserConfig = {
   },
   mocha: {
     timeout: 40000,
+  },
+  etherscan: {
+    apiKey: {
+      sepolia: process.env.ETHERSCAN_API_KEY ?? "",
+      baseGoerli: process.env.BASESCAN_API_KEY ?? "",
+    },
+    customChains: [
+      {
+        network: "baseGoerli",
+        chainId: 84531,
+        urls: {
+          apiURL: "https://api-goerli.basescan.org/api",
+          browserURL: "https://goerli.basescan.org",
+        },
+      },
+    ],
   },
 };
 
