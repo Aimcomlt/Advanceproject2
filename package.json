@@ -9,7 +9,8 @@
     "build": "tsc -b",
     "lint": "eslint \"**/*.{ts,tsx,js,jsx}\" --max-warnings=0",
     "format": "prettier --write .",
-    "typecheck": "tsc --pretty --noEmit"
+    "typecheck": "tsc --pretty --noEmit",
+    "audit": "npm audit --omit=dev"
   },
   "workspaces": [
     "contracts",

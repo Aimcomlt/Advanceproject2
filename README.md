@@ -205,6 +205,7 @@ These commands install Hardhat, TypeScript, ESLint, and Prettier at the monorepo
 | Script               | Purpose                           |
 | -------------------- | --------------------------------- |
 | `deploy-core.ts`     | Deploy core contracts and proxies |
+| `deploy-timelock.ts` | Deploy governance timelock and assign emergency roles |
 | `upgrade-logic.ts`   | Execute DAO-authorized upgrades   |
 | `mint-book.ts`       | Mint test NFTs for development    |
 | `simulate-reader.ts` | Emulate reader engagement flows   |
@@ -233,6 +234,7 @@ These commands install Hardhat, TypeScript, ESLint, and Prettier at the monorepo
 | `architecture.md` | System and panel blueprint                      |
 | `dev-guide.md`    | Integration & development conventions           |
 | `tokenomics.md`   | AuthorCoin flow, staking, rewards               |
+| `operations/production-runbook.md` | Production security scans, timelock operations, deployment workflow |
 
 ---
 

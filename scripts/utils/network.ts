@@ -22,6 +22,15 @@ export interface DeploymentConfig {
   storyDao: StoryDaoConfig;
 }
 
+export interface TimelockConfig {
+  minDelay: number;
+  proposers: string[];
+  executors: string[];
+  cancellers: string[];
+  admin?: string;
+  emergencyCouncil?: string;
+}
+
 const DEFAULT_CONFIG: Record<string, Omit<DeploymentConfig, "admin" | "treasury" | "saleOracle">> = {
   localhost: {
     readerBaseUri: "ipfs://reader-local/",
@@ -52,6 +61,27 @@ const DEFAULT_CONFIG: Record<string, Omit<DeploymentConfig, "admin" | "treasury"
       proposalThreshold: 5,
       quorumBps: 500,
     },
+  },
+};
+
+const DEFAULT_TIMELOCK_CONFIG: Record<string, Omit<TimelockConfig, "admin" | "emergencyCouncil">> = {
+  localhost: {
+    minDelay: 60,
+    proposers: [],
+    executors: ["0x0000000000000000000000000000000000000000"],
+    cancellers: [],
+  },
+  sepolia: {
+    minDelay: 43_200,
+    proposers: [],
+    executors: ["0x0000000000000000000000000000000000000000"],
+    cancellers: [],
+  },
+  baseGoerli: {
+    minDelay: 43_200,
+    proposers: [],
+    executors: ["0x0000000000000000000000000000000000000000"],
+    cancellers: [],
   },
 };
 
@@ -94,6 +124,24 @@ function coerceNumeric(value: NumericLike | undefined): NumericLike | undefined 
   throw new Error(`Invalid numeric value provided: ${value}`);
 }
 
+function coerceAddressList(value?: string): string[] | undefined {
+  if (!value) {
+    return undefined;
+  }
+  const entries = value
+    .split(/[\s,]+/)
+    .map((entry) => entry.trim())
+    .filter((entry) => entry.length > 0)
+    .map((entry) => {
+      const result = coerceAddress(entry);
+      if (!result) {
+        throw new Error(`Invalid address provided in list: ${entry}`);
+      }
+      return result;
+    });
+  return [...new Set(entries)];
+}
+
 export function resolveDeploymentConfig(networkName: NetworkName): DeploymentConfig {
   const prefix = toEnvPrefix(networkName);
   const defaults = DEFAULT_CONFIG[networkName] ?? DEFAULT_CONFIG.localhost;
@@ -123,6 +171,27 @@ export function resolveDeploymentConfig(networkName: NetworkName): DeploymentCon
     readerBaseUri,
     bookBaseUri,
     storyDao,
+  };
+}
+
+export function resolveTimelockConfig(networkName: NetworkName, fallbackAdmin?: string): TimelockConfig {
+  const prefix = toEnvPrefix(networkName);
+  const defaults = DEFAULT_TIMELOCK_CONFIG[networkName] ?? DEFAULT_TIMELOCK_CONFIG.localhost;
+
+  const minDelay = Number(readEnv(prefix, "TIMELOCK_MIN_DELAY") ?? defaults.minDelay);
+  const proposers = coerceAddressList(readEnv(prefix, "TIMELOCK_PROPOSERS")) ?? defaults.proposers;
+  const executors = coerceAddressList(readEnv(prefix, "TIMELOCK_EXECUTORS")) ?? defaults.executors;
+  const cancellers = coerceAddressList(readEnv(prefix, "TIMELOCK_CANCELLERS")) ?? defaults.cancellers;
+  const admin = coerceAddress(readEnv(prefix, "TIMELOCK_ADMIN")) ?? fallbackAdmin;
+  const emergencyCouncil = coerceAddress(readEnv(prefix, "EMERGENCY_COUNCIL"));
+
+  return {
+    minDelay,
+    proposers,
+    executors,
+    cancellers,
+    admin,
+    emergencyCouncil,
   };
 }
 
