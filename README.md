@@ -228,13 +228,15 @@ These commands install Hardhat, TypeScript, ESLint, and Prettier at the monorepo
 
 ### **`/docs/` Directory**
 
-| File              | Description                                     |
-| ----------------- | ----------------------------------------------- |
-| `whitepaper.md`   | *The Literary Sovereignty Manifesto* (rendered) |
-| `architecture.md` | System and panel blueprint                      |
-| `dev-guide.md`    | Integration & development conventions           |
-| `tokenomics.md`   | AuthorCoin flow, staking, rewards               |
-| `operations/production-runbook.md` | Production security scans, timelock operations, deployment workflow |
+| File              | Description                                     | Version |
+| ----------------- | ----------------------------------------------- | ------- |
+| [`whitepaper.md`](docs/whitepaper.md)   | *The Literary Sovereignty Manifesto* (rendered) | 1.0.0 |
+| [`architecture.md`](docs/architecture.md) | System and panel blueprint                      | 1.0.0 |
+| [`dev-guide.md`](docs/dev-guide.md)    | Integration & development conventions           | 1.0.0 |
+| [`tokenomics.md`](docs/tokenomics.md)   | AuthorCoin flow, staking, rewards               | 1.0.0 |
+| [`operations/production-runbook.md`](docs/operations/production-runbook.md) | Production security scans, timelock operations, deployment workflow | 0.9.0 |
+
+> Refer to the [documentation changelog](docs/CHANGELOG.md) when version bumps occur.
 
 ---
 
