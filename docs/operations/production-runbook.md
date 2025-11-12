@@ -1,5 +1,8 @@
 # Production Operations Runbook
 
+**Document Version:** 0.9.0  \\
+**Last Updated:** 2024-04-15
+
 This runbook consolidates the operational procedures required to bring the Literary Sovereignty Blueprint to production. It focuses on three areas:
 
 1. Preparing and running automated security scans.
