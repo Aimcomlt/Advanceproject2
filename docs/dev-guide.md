@@ -27,12 +27,101 @@ npm run test
 - **Testing:** Require deterministic fixtures and property-based fuzzing for financial primitives.
 - **Documentation:** Update relevant files in `/docs/` and include version bump notes.
 
-## Local Development Workflow
-1. Start Hardhat node: `npm run chain:dev`.
-2. Deploy contracts with tagged scripts: `npx hardhat run scripts/deploy-core.ts --network localhost`.
-3. Seed sample data: `npx hardhat run scripts/mint-book.ts --network localhost`.
-4. Launch frontend workspace: `npm run dev --workspace frontend`.
-5. Iterate using Viem hooks and React Query; maintain hot reload compatibility.
+## Local Development Setup
+
+### 1. Environment Bootstrap
+
+1. **Install global dependencies**
+   ```bash
+   brew install foundry  # includes cast/anvil (macOS)
+   npm install --global hardhat pnpm
+   ```
+   On Linux, prefer `foundryup` for Foundry and your distribution's package manager for Node.js 18 LTS.
+
+2. **Clone & install workspaces**
+   ```bash
+   git clone git@github.com:StoryDAO/Advanceproject2.git
+   cd Advanceproject2
+   npm install
+   ```
+   Use `pnpm install` if you manage lockfiles with pnpm.
+
+3. **Configure environment variables**
+   - Copy `.env.example` to `.env`.
+   - Provide RPC URLs (`SEPOLIA_RPC_URL`, `MAINNET_RPC_URL`), wallet keys (`DEV_PRIVATE_KEY`), and optional subgraph endpoints.
+   - For the frontend, duplicate `frontend/.env.example` to `frontend/.env.local` and set `NEXT_PUBLIC_CHAIN_ID`, `NEXT_PUBLIC_RPC_URL`, and wallet connect IDs.
+
+4. **Build shared artefacts**
+   ```bash
+   npm run build:types
+   npm run lint
+   ```
+   TypeChain outputs populate `frontend/lib/contracts` for hooks and tests.
+
+### 2. Contract Development Loop
+
+1. **Start a local chain**
+   ```bash
+   npm run chain:dev
+   ```
+   This runs Hardhat's in-memory chain preloaded with deterministic accounts.
+
+2. **Deploy core contracts**
+   ```bash
+   npx hardhat run scripts/deploy-core.ts --network localhost
+   ```
+   Deployment manifests write to `deployments/localhost.json` and expose ABIs for the frontend.
+
+3. **Seed fixtures & scenarios**
+   ```bash
+   npx hardhat run scripts/mint-book.ts --network localhost
+   npx hardhat run scripts/seed-governance.ts --network localhost
+   ```
+   Use tagged scenario scripts in `scripts/` to populate governance proposals, NFT metadata, and treasury balances.
+
+4. **Iterate with tests**
+   - Run focused tests: `npx hardhat test test/AuthorCoin.spec.ts`.
+   - Use `forge test` for Foundry fuzz suites.
+   - Monitor events with `cast logs --rpc-url http://127.0.0.1:8545`.
+
+### 3. Frontend Development Loop
+
+1. **Install workspace dependencies** (if not already done):
+   ```bash
+   npm install --workspace frontend
+   ```
+
+2. **Start the development server**
+   ```bash
+   npm run dev --workspace frontend
+   ```
+   The app expects contract artefacts in `frontend/lib/contracts/localhost.json`; regenerate via the deployment step when contrac
+t ABIs change.
+
+3. **Connect to the local chain**
+   - Ensure the wallet (e.g., Metamask) points to `http://127.0.0.1:8545` with chain ID `31337`.
+   - Import the mnemonic from `.env` or Hardhat's default test accounts for signing proposals.
+
+4. **Hot reloading & storybook**
+   - Enable React Fast Refresh for component development.
+   - Run `npm run storybook --workspace frontend` for isolated UI work; provide mock Viem clients under `frontend/.storybook/moc
+ks`.
+
+5. **End-to-end checks**
+   ```bash
+   npm run test:e2e --workspace frontend
+   ```
+   This Playwright suite expects a seeded local chain; rerun seeding scripts if tests fail due to missing fixtures.
+
+### Quick Reference Commands
+
+| Action | Command |
+| --- | --- |
+| Start local Hardhat chain | `npm run chain:dev` |
+| Deploy contracts to localhost | `npx hardhat run scripts/deploy-core.ts --network localhost` |
+| Seed sample NFTs & governance | `npx hardhat run scripts/mint-book.ts --network localhost` |
+| Launch frontend dev server | `npm run dev --workspace frontend` |
+| Run Playwright smoke tests | `npm run test:e2e --workspace frontend` |
 
 ## Testing Matrix
 | Layer        | Tools                  | Expectations                                   |
