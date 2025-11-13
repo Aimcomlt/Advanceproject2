@@ -8,6 +8,10 @@ dotenv.config();
 const PRIVATE_KEY = process.env.DEPLOYER_PRIVATE_KEY ?? process.env.PRIVATE_KEY;
 
 const networks: NetworksUserConfig = {
+  hardhat: {
+    chainId: 31337,
+    ...(PRIVATE_KEY ? { accounts: [PRIVATE_KEY] } : {}),
+  },
   localhost: {
     url: process.env.LOCALHOST_RPC_URL ?? "http://127.0.0.1:8545",
   },
