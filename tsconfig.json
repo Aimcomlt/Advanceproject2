@@ -1,13 +1,4 @@
 {
-  "extends": "./tsconfig.base.json",
-  "compilerOptions": {
-    "types": ["node", "hardhat"],
-    "noEmit": true
-  },
-  "include": [
-    "hardhat.config.ts",
-    "scripts/**/*.ts",
-    "test/**/*.ts",
-    "tooling/**/*.ts"
-  ]
+  "files": [],
+  "references": [{ "path": "./game" }]
 }

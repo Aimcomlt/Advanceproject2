@@ -1,37 +1,28 @@
 {
-  "name": "literary-sovereignty",
-  "version": "0.1.0",
+  "name": "center-core-shooter",
+  "version": "0.2.0",
   "private": true,
-  "description": "Monorepo for the Literary Sovereignty Blueprint smart contracts, frontend, and tooling.",
+  "description": "Game-first repository for a center-pinned 360\u00b0 arcade shooter.",
   "license": "MIT",
   "packageManager": "npm@10.8.1",
-  "scripts": {
-    "build": "tsc -b",
-    "lint": "eslint \"**/*.{ts,tsx,js,jsx}\" --max-warnings=0",
-    "format": "prettier --write .",
-    "typecheck": "tsc --pretty --noEmit",
-    "audit": "npm audit --omit=dev"
-  },
   "workspaces": [
-    "contracts",
-    "frontend",
-    "tooling",
     "game"
   ],
+  "scripts": {
+    "dev": "npm run -w game dev",
+    "build": "npm run -w game build",
+    "test": "npm run -w game test",
+    "lint": "npm run -w game lint",
+    "typecheck": "npm run -w game typecheck",
+    "format": "prettier --write ."
+  },
   "devDependencies": {
-    "@types/node": "^20.16.5",
-    "@nomicfoundation/hardhat-toolbox": "^5.0.0",
     "@typescript-eslint/eslint-plugin": "^8.4.0",
     "@typescript-eslint/parser": "^8.4.0",
-    "dotenv": "^16.4.5",
     "eslint": "^9.9.1",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-prettier": "^5.2.1",
-    "hardhat": "^2.22.9",
-    "solidity-coverage": "^0.8.12",
     "prettier": "^3.3.3",
-    "ts-node": "^10.9.2",
-    "tsconfig-paths": "^4.2.0",
     "typescript": "^5.5.4"
   }
 }
