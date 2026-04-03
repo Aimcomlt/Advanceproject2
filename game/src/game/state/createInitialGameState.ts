@@ -5,6 +5,7 @@ export function createInitialGameState(width: number, height: number): GameState
     tick: 0,
     elapsedMs: 0,
     nextBulletId: 1,
+    nextEnemyId: 1,
     worldOffset: { x: 0, y: 0 },
     player: {
       position: {
@@ -15,16 +16,9 @@ export function createInitialGameState(width: number, height: number): GameState
       fireCooldownMs: 0
     },
     bullets: [],
-    enemies: [
-      {
-        id: 1,
-        position: { x: width - 96, y: 96 },
-        velocity: { x: -30, y: 24 },
-        radius: 12,
-        health: 3
-      }
-    ],
+    enemies: [],
     score: 0,
-    waveTimerMs: 0
+    waveTimerMs: 0,
+    enemySpawnTimerMs: 0
   };
 }

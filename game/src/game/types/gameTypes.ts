@@ -28,12 +28,14 @@ export interface GameState {
   tick: number;
   elapsedMs: number;
   nextBulletId: number;
+  nextEnemyId: number;
   worldOffset: Vec2;
   player: PlayerState;
   bullets: BulletState[];
   enemies: EnemyState[];
   score: number;
   waveTimerMs: number;
+  enemySpawnTimerMs: number;
 }
 
 export interface FrameInput {
@@ -66,5 +68,8 @@ export interface GameConfig {
     speedPerSec: number;
     radius: number;
     collisionDamage: number;
+    health: number;
+    spawnIntervalMs: number;
+    maxActive: number;
   };
 }
