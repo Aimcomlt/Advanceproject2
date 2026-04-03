@@ -22,6 +22,9 @@ export const GAME_CONFIG: GameConfig = {
   enemy: {
     speedPerSec: 38,
     radius: 12,
-    collisionDamage: 0
+    collisionDamage: 0,
+    health: 3,
+    spawnIntervalMs: 900,
+    maxActive: 8
   }
 };

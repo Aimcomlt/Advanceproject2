@@ -1,6 +1,7 @@
 import type { FrameInput, GameConfig, GameState } from '../types/gameTypes';
 import { updatePlayerAim } from '../systems/updatePlayerAim';
 import { updateWorldRoll } from '../systems/updateWorldRoll';
+import { spawnEnemies } from '../systems/spawnEnemies';
 import { updateWeapons } from '../weapons/updateWeapons';
 import { updateBullets } from '../entities/updateBullets';
 import { updateEnemies } from '../entities/updateEnemies';
@@ -18,6 +19,7 @@ export function simulateFrame(
 
   nextState = updatePlayerAim(nextState, input, fixedDeltaMs, config);
   nextState = updateWorldRoll(nextState, input, fixedDeltaMs, config);
+  nextState = spawnEnemies(nextState, fixedDeltaMs, config);
   nextState = updateWeapons(nextState, input, fixedDeltaMs, config);
   nextState = updateBullets(nextState, fixedDeltaMs);
   nextState = updateEnemies(nextState, fixedDeltaMs);
