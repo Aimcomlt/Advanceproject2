@@ -17,9 +17,11 @@ npm run dev
 
 Then open the local Vite URL shown in the terminal.
 
+> Install dependencies from the repository root. Do not run a separate install inside `game/`.
+
 ## Repository commands
 
-All root commands delegate to the active `game` workspace:
+Root commands are the canonical validation path. Runtime commands delegate into the `game` workspace:
 
 - `npm run dev`
 - `npm run build`
