@@ -15,7 +15,8 @@
   "workspaces": [
     "contracts",
     "frontend",
-    "tooling"
+    "tooling",
+    "game"
   ],
   "devDependencies": {
     "@types/node": "^20.16.5",
