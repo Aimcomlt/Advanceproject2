@@ -249,6 +249,12 @@ npm run typecheck
 
 If a command is missing, add it intentionally rather than inventing fake validation in the report.
 
+### Workspace/install truth
+- Run dependency installation from the repository root (`/workspace/Advanceproject2`).
+- Root `package.json` owns repo-level tooling (lint/format and validation entrypoints).
+- `game/` owns the runtime app implementation and build/test/typecheck execution.
+- Run validation from root unless a command explicitly requires workspace scope.
+
 ---
 
 ## Reporting format after each Codex task
