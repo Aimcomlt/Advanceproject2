@@ -2,7 +2,7 @@
   "name": "center-core-shooter",
   "version": "0.2.0",
   "private": true,
-  "description": "Game-first repository for a center-pinned 360\u00b0 arcade shooter.",
+  "description": "Game-first repository for a center-pinned 360° arcade shooter.",
   "license": "MIT",
   "packageManager": "npm@10.8.1",
   "workspaces": [

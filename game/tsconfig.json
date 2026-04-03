@@ -12,7 +12,8 @@
     "jsx": "react-jsx",
     "strict": true,
     "noEmit": true,
-    "composite": true
+    "composite": true,
+    "types": ["vite/client", "vitest/globals"]
   },
   "include": [
     "src",

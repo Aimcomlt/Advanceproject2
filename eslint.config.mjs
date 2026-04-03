@@ -6,6 +6,7 @@ export default [
   {
     ignores: ['**/dist/**', '**/node_modules/**', '**/legacy/**']
   },
+  js.configs.recommended,
   {
     files: ['**/*.{ts,tsx}'],
     languageOptions: {
